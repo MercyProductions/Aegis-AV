@@ -17,6 +17,7 @@ interface AgentCommandResult {
 function findAgentExecutable() {
   const candidates = [
     process.env.AEGIS_AGENT_EXE,
+    path.resolve(process.resourcesPath, 'bin', 'aegis-agent.exe'),
     path.resolve(app.getAppPath(), '..', '..', 'target', 'release', 'aegis-agent.exe'),
     path.resolve(__dirname, '..', '..', '..', 'target', 'release', 'aegis-agent.exe'),
     path.resolve(process.cwd(), 'target', 'release', 'aegis-agent.exe'),
@@ -30,7 +31,11 @@ function findAgentExecutable() {
   return found;
 }
 
-function repoRootFromAgent(agentPath: string) {
+function runtimeRootFromAgent(agentPath: string) {
+  if (agentPath.toLowerCase().startsWith(process.resourcesPath.toLowerCase())) {
+    return process.resourcesPath;
+  }
+
   return path.resolve(path.dirname(agentPath), '..', '..');
 }
 
@@ -40,7 +45,7 @@ function runAgent(args: string[]): Promise<AgentCommandResult> {
     execFile(
       agentPath,
       args,
-      { cwd: repoRootFromAgent(agentPath), windowsHide: true },
+      { cwd: runtimeRootFromAgent(agentPath), windowsHide: true },
       (error, stdout, stderr) => {
         resolve({
           ok: !error,
@@ -82,7 +87,7 @@ function registerAgentIpc() {
     if (!guardProcess || guardProcess.killed || guardProcess.exitCode !== null) {
       const agentPath = findAgentExecutable();
       guardProcess = spawn(agentPath, ['run', '--arm'], {
-        cwd: repoRootFromAgent(agentPath),
+        cwd: runtimeRootFromAgent(agentPath),
         windowsHide: true,
         stdio: 'ignore'
       });

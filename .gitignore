@@ -2,11 +2,13 @@
 **/node_modules/
 **/dist/
 **/dist-electron/
+**/release-desktop/
 **/__pycache__/
 **/*.pdb
 **/*.log
 *.tmp
 apps/desktop-ui/phase*-smoke.png
+AegisAV.exe
 
 # Do not commit local runtime data.
 /data/

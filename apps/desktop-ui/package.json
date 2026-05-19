@@ -1,12 +1,15 @@
 {
   "name": "aegis-desktop-ui",
   "version": "0.1.0",
+  "description": "Aegis AV desktop command center",
+  "author": "MercyProductions",
   "private": true,
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "desktop": "npm run build && npm run electron:build && electron .",
+    "package:win": "npm run build && npm run electron:build && electron-builder --win portable --x64",
     "build": "tsc && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "electron:build": "tsc -p tsconfig.electron.json"
@@ -21,7 +24,45 @@
   "devDependencies": {
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
-    "typescript": "^5.7.2",
-    "electron": "^42.1.0"
+    "electron": "^42.1.0",
+    "electron-builder": "^26.8.1",
+    "typescript": "^5.7.2"
+  },
+  "build": {
+    "appId": "com.mercyproductions.aegisav",
+    "productName": "AegisAV",
+    "directories": {
+      "output": "release-desktop"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../../target/release/aegis-agent.exe",
+        "to": "bin/aegis-agent.exe"
+      },
+      {
+        "from": "../../target/release/aegis-scanner.exe",
+        "to": "bin/aegis-scanner.exe"
+      },
+      {
+        "from": "../../core/signatures",
+        "to": "core/signatures"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "AegisAV-${version}-${arch}.${ext}"
+    }
   }
 }

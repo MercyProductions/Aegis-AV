@@ -70,10 +70,19 @@ See [docs/LOCAL_GUARD_AGENT.md](docs/LOCAL_GUARD_AGENT.md) for status, custom wa
 
 ## Launch The Desktop Control App
 
-Use the GUI if you do not want to run guard commands manually:
+Double-click the local portable app:
+
+```txt
+AegisAV.exe
+```
+
+If you need to rebuild that EXE:
 
 ```powershell
-.\scripts\launch-aegis-desktop.ps1
+cd apps\desktop-ui
+npm run package:win
+cd ..\..
+Copy-Item apps\desktop-ui\release-desktop\AegisAV-0.1.0-x64.exe .\AegisAV.exe -Force
 ```
 
 Open the `Device Control` page to Start Guard, Arm, Disarm, Stop Guard, and refresh status. Native guard controls are available in Electron, not the browser-only dev page.

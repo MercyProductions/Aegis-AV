@@ -30,13 +30,24 @@ The desktop UI now has a `Device Control` page with buttons for:
 - Stop Guard
 - Refresh Status
 
-Launch it with:
+The simplest local launch is:
 
-```powershell
-.\scripts\launch-aegis-desktop.ps1
+```txt
+AegisAV.exe
 ```
 
-Or manually:
+Double-click that file from the project root.
+
+Rebuild the portable EXE with:
+
+```powershell
+cd apps\desktop-ui
+npm run package:win
+cd ..\..
+Copy-Item apps\desktop-ui\release-desktop\AegisAV-0.1.0-x64.exe .\AegisAV.exe -Force
+```
+
+For development only, you can still launch from source:
 
 ```powershell
 cargo build --release -p aegis-agent -p aegis-scanner
