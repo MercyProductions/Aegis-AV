@@ -84,7 +84,8 @@ button {
 .topActions button,
 .primaryAction,
 .modeRow,
-.settingsProfile {
+.settingsProfile,
+.controlPanel button {
   display: flex;
   align-items: center;
   border: 1px solid rgba(185, 206, 225, 0.18);
@@ -93,6 +94,11 @@ button {
   background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .navItem {
@@ -263,6 +269,12 @@ p {
   height: 142px;
 }
 
+.armedRing {
+  background:
+    radial-gradient(circle at center, #123026 54%, transparent 56%),
+    conic-gradient(#35e6a0 0 96%, rgba(255, 255, 255, 0.14) 96% 100%);
+}
+
 .statusRing span {
   color: #ffffff;
   font-size: 34px;
@@ -409,11 +421,24 @@ p {
 .detailDrawer,
 .incidentPanel,
 .actionPanel,
+.controlPanel,
 .updateList {
   display: grid;
   gap: 12px;
   align-content: start;
   padding: 18px;
+}
+
+.controlPanel {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+}
+
+.controlPanel button {
+  justify-content: center;
+  gap: 10px;
+  min-height: 54px;
+  font-weight: 700;
 }
 
 .timelineItem,

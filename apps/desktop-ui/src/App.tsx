@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import {
   Activity,
@@ -90,6 +90,44 @@ interface ProcessNodeUi {
   children: ProcessNodeUi[];
 }
 
+interface AgentStatus {
+  armed: boolean;
+  interval_seconds: number;
+  watched_paths: string[];
+  last_scan_unix_seconds: number | null;
+  last_scan_files: number;
+  last_scan_suspicious: number;
+  last_scan_threats: number;
+  last_scan_errors: number;
+  state_file?: string;
+  log_file?: string;
+}
+
+interface AgentResponse {
+  ok: boolean;
+  stdout: string;
+  stderr: string;
+  error?: string;
+  agentPath?: string;
+  guardRunning?: boolean;
+  status?: AgentStatus;
+}
+
+declare global {
+  interface Window {
+    aegis?: {
+      version: string;
+      agent?: {
+        status: () => Promise<AgentResponse>;
+        arm: () => Promise<AgentResponse>;
+        disarm: () => Promise<AgentResponse>;
+        start: () => Promise<AgentResponse>;
+        stop: () => Promise<AgentResponse>;
+      };
+    };
+  }
+}
+
 export function App() {
   const [page, setPage] = useState<PageKey>('security');
   const activeNav = useMemo(() => navItems.find((item) => item.key === page), [page]);
@@ -142,6 +180,7 @@ export function App() {
           </div>
         </header>
         {page === 'security' && <SecurityCenterPage />}
+        {page === 'deviceControl' && <DeviceControlPage />}
         {page === 'aegisCore' && <AegisCorePage />}
         {page === 'systemGraph' && <SystemGraphPage />}
         {page === 'orchestration' && <OrchestrationPage />}
@@ -194,6 +233,126 @@ export function App() {
         {page === 'settings' && <SettingsPage />}
       </section>
     </main>
+  );
+}
+
+function DeviceControlPage() {
+  const [response, setResponse] = useState<AgentResponse | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('Ready');
+  const api = window.aegis?.agent;
+  const status = response?.status;
+
+  const runAction = async (label: string, action: (() => Promise<AgentResponse>) | undefined) => {
+    if (!action) {
+      setMessage('Open Aegis in the Electron desktop app to control the guard agent.');
+      return;
+    }
+    setBusy(true);
+    setMessage(`${label}...`);
+    try {
+      const next = await action();
+      setResponse(next);
+      setMessage(next.ok ? `${label} complete.` : next.error ?? `${label} failed.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : `${label} failed.`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!api) {
+      setMessage('Desktop agent controls are available in the Electron app.');
+      return;
+    }
+    void runAction('Refreshing status', api.status);
+  }, []);
+
+  return (
+    <div className="pageGrid securityGrid">
+      <section className="commandHero">
+        <div className={status?.armed ? 'statusRing large armedRing' : 'statusRing large'}>
+          <span>{status?.armed ? 'ON' : 'OFF'}</span>
+          <small>guard</small>
+        </div>
+        <div className="statusCopy">
+          <h2>Device Guard Control</h2>
+          <p>Start, arm, disarm, and stop the local Aegis guard from the desktop app. The guard remains visible and user-controlled.</p>
+        </div>
+        <button className="primaryAction" disabled={busy || !api} onClick={() => runAction('Start guard', api?.start)}>
+          <ShieldPlus size={18} />Start Guard
+        </button>
+      </section>
+      <section className="controlPanel">
+        <button disabled={busy || !api} onClick={() => runAction('Arm guard', api?.arm)}>
+          <ShieldCheck size={18} />Arm
+        </button>
+        <button disabled={busy || !api} onClick={() => runAction('Disarm guard', api?.disarm)}>
+          <CirclePause size={18} />Disarm
+        </button>
+        <button disabled={busy || !api} onClick={() => runAction('Stop guard', api?.stop)}>
+          <LockKeyhole size={18} />Stop Guard
+        </button>
+        <button disabled={busy || !api} onClick={() => runAction('Refresh status', api?.status)}>
+          <RefreshCw size={18} />Refresh
+        </button>
+      </section>
+      <section className="metricGrid securityMetrics">
+        <article className={`metricCard ${status?.armed ? 'good' : 'warn'}`}>
+          <ShieldCheck size={21} />
+          <span>Armed</span>
+          <strong>{status?.armed ? 'Yes' : 'No'}</strong>
+          <small>{response?.guardRunning ? 'Guard process running' : 'Guard process stopped'}</small>
+        </article>
+        <article className="metricCard steady">
+          <Gauge size={21} />
+          <span>Interval</span>
+          <strong>{status?.interval_seconds ?? 30}s</strong>
+          <small>Periodic scan cadence</small>
+        </article>
+        <article className="metricCard steady">
+          <FileSearch size={21} />
+          <span>Last Scan</span>
+          <strong>{status?.last_scan_files ?? 0}</strong>
+          <small>{status?.last_scan_unix_seconds ? `Unix ${status.last_scan_unix_seconds}` : 'Never scanned'}</small>
+        </article>
+        <article className={`metricCard ${(status?.last_scan_threats ?? 0) > 0 ? 'warn' : 'good'}`}>
+          <ShieldAlert size={21} />
+          <span>Findings</span>
+          <strong>{status?.last_scan_threats ?? 0}</strong>
+          <small>{status?.last_scan_suspicious ?? 0} suspicious, {status?.last_scan_errors ?? 0} errors</small>
+        </article>
+      </section>
+      <section className="actionPanel">
+        <h2>Watched Locations</h2>
+        {(status?.watched_paths ?? []).map((item) => (
+          <div className="actionRow" key={item}>
+            <CheckCircle2 size={16} />
+            <span>{item}</span>
+          </div>
+        ))}
+        {!status?.watched_paths?.length && (
+          <div className="actionRow">
+            <Activity size={16} />
+            <span>{message}</span>
+          </div>
+        )}
+      </section>
+      <section className="detailDrawer">
+        <h2>Agent Details</h2>
+        <dl>
+          <dt>Status</dt>
+          <dd>{message}</dd>
+          <dt>Agent</dt>
+          <dd>{response?.agentPath ?? 'Build target/release/aegis-agent.exe first'}</dd>
+          <dt>State</dt>
+          <dd>{status?.state_file ?? 'Not loaded'}</dd>
+          <dt>Logs</dt>
+          <dd>{status?.log_file ?? 'Not loaded'}</dd>
+        </dl>
+      </section>
+    </div>
   );
 }
 
@@ -1417,6 +1576,7 @@ function LiveFeed() {
 function headlineFor(page: PageKey) {
   const headlines: Record<PageKey, string> = {
     security: 'Security Center',
+    deviceControl: 'Device Guard Control',
     aegisCore: 'Unified AegisCore',
     systemGraph: 'Live System Graph',
     orchestration: 'Intelligent Orchestration',

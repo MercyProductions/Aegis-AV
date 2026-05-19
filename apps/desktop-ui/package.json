@@ -6,6 +6,7 @@
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
+    "desktop": "npm run build && npm run electron:build && electron .",
     "build": "tsc && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "electron:build": "tsc -p tsconfig.electron.json"

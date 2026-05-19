@@ -5,6 +5,13 @@ version = 3
 [[package]]
 name = "aegis-agent"
 version = "0.1.0"
+dependencies = [
+ "aegis-scanner",
+ "anyhow",
+ "clap",
+ "serde",
+ "serde_json",
+]
 
 [[package]]
 name = "aegis-quarantine"

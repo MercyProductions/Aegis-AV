@@ -25,6 +25,7 @@ import {
 
 export type PageKey =
   | 'security'
+  | 'deviceControl'
   | 'aegisCore'
   | 'systemGraph'
   | 'orchestration'
@@ -84,6 +85,7 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   { key: 'security', label: 'Security', icon: ShieldCheck },
+  { key: 'deviceControl', label: 'Device Control', icon: ShieldPlus },
   { key: 'aegisCore', label: 'AegisCore', icon: ShieldCheck },
   { key: 'systemGraph', label: 'System Graph', icon: Layers3 },
   { key: 'orchestration', label: 'Orchestrate', icon: RefreshCw },

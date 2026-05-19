@@ -46,6 +46,38 @@ Use a custom signature file:
 cargo run -p aegis-scanner -- scan C:\Path\To\File --signatures core\signatures\hashes.json
 ```
 
+## Run The Local Guard Agent
+
+Build local EXEs:
+
+```powershell
+cargo build --release -p aegis-agent -p aegis-scanner
+```
+
+Arm and run visible foreground protection:
+
+```powershell
+target\release\aegis-agent.exe run --arm --interval-seconds 30
+```
+
+Disarm from another PowerShell window:
+
+```powershell
+target\release\aegis-agent.exe disarm
+```
+
+See [docs/LOCAL_GUARD_AGENT.md](docs/LOCAL_GUARD_AGENT.md) for status, custom watched folders, and log locations.
+
+## Launch The Desktop Control App
+
+Use the GUI if you do not want to run guard commands manually:
+
+```powershell
+.\scripts\launch-aegis-desktop.ps1
+```
+
+Open the `Device Control` page to Start Guard, Arm, Disarm, Stop Guard, and refresh status. Native guard controls are available in Electron, not the browser-only dev page.
+
 ## Safety Boundaries
 
 This project is defensive and transparent. It does not implement malware execution, stealth, bypasses, credential access, disabling other security tools, unauthorized remote control, or live malware handling.
