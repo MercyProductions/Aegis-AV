@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/quarantine-record.schema.json",
+  "title": "Aegis Quarantine Record",
+  "type": "object",
+  "required": ["quarantine_id", "original_path", "stored_path", "sha256", "detection", "date"],
+  "properties": {
+    "quarantine_id": { "type": "string" },
+    "original_path": { "type": "string" },
+    "stored_path": { "type": "string" },
+    "sha256": { "type": "string" },
+    "detection": { "type": "string" },
+    "date": { "type": "string" },
+    "cleanup_after_days": { "type": ["integer", "null"], "minimum": 1 }
+  }
+}

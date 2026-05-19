@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/behavior-event.schema.json",
+  "title": "Aegis Behavior Event",
+  "type": "object",
+  "required": ["event_type", "timestamp_ms"],
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "file_modified",
+        "startup_folder_write",
+        "temp_executable_drop",
+        "script_spawned_shell",
+        "downloads_executable_launch",
+        "failed_access",
+        "child_process"
+      ]
+    },
+    "path": { "type": "string" },
+    "process_id": { "type": ["integer", "null"] },
+    "timestamp_ms": { "type": "integer", "minimum": 0 },
+    "risk_score": { "type": "integer", "minimum": 0, "maximum": 100 }
+  }
+}

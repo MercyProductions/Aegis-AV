@@ -1,0 +1,3 @@
+/*
+  Placeholder for future safe script heuristics and YARA rules.
+*/

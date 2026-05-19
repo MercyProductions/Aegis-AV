@@ -1,0 +1,13 @@
+/target/
+**/node_modules/
+**/dist/
+**/dist-electron/
+**/__pycache__/
+**/*.pdb
+**/*.log
+*.tmp
+apps/desktop-ui/phase*-smoke.png
+
+# Do not commit local runtime data.
+/data/
+/ProgramData/

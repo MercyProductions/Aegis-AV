@@ -1,0 +1,11 @@
+[
+  {
+    "id": "AEGIS-TEST-0001",
+    "name": "Test.EICAR.Signature",
+    "type": "test",
+    "severity": "high",
+    "description": "Safe antivirus test signature for the canonical EICAR test file.",
+    "recommended_action": "quarantine",
+    "sha256": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f"
+  }
+]

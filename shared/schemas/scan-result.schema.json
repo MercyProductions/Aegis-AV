@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/scan-result.schema.json",
+  "title": "Aegis Scan Result",
+  "type": "object",
+  "required": ["path", "verdict", "confidence_score", "scan_duration_ms"],
+  "properties": {
+    "path": { "type": "string" },
+    "verdict": {
+      "type": "string",
+      "enum": ["clean", "suspicious", "malicious", "skipped", "error"]
+    },
+    "detection_name": { "type": ["string", "null"] },
+    "confidence_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "matched_rule": { "type": ["string", "null"] },
+    "sha256": { "type": ["string", "null"] },
+    "scan_duration_ms": { "type": "integer", "minimum": 0 }
+  }
+}

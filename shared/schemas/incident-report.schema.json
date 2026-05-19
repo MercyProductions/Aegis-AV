@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/incident-report.schema.json",
+  "title": "Aegis Incident Report",
+  "type": "object",
+  "required": [
+    "incident_id",
+    "created_at",
+    "detection_name",
+    "severity",
+    "file_path",
+    "sha256",
+    "timeline",
+    "user_action_taken",
+    "recommended_next_steps"
+  ],
+  "properties": {
+    "incident_id": { "type": "string" },
+    "created_at": { "type": "string" },
+    "detection_name": { "type": "string" },
+    "severity": { "type": "string" },
+    "file_path": { "type": "string" },
+    "sha256": { "type": "string" },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["time", "event", "details"],
+        "properties": {
+          "time": { "type": "string" },
+          "event": { "type": "string" },
+          "details": { "type": "string" }
+        }
+      }
+    },
+    "matched_signatures": { "type": "array", "items": { "type": "string" } },
+    "matched_rules": { "type": "array", "items": { "type": "string" } },
+    "heuristic_reasons": { "type": "array", "items": { "type": "string" } },
+    "user_action_taken": { "type": "string" },
+    "recommended_next_steps": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/workspace.schema.json",
+  "title": "Aegis Workspace",
+  "type": "object",
+  "required": ["kind", "layout", "widgets", "tools", "permissions", "automation_visible"],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": ["security", "diagnostics", "developer", "automation", "network", "enterprise"]
+    },
+    "layout": { "type": "string" },
+    "widgets": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "tools": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "permissions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "automation_visible": { "type": "boolean" }
+  }
+}

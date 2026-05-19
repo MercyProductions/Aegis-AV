@@ -1,0 +1,12 @@
+{
+  "known_files": {},
+  "trusted_vendors": [
+    "Microsoft Windows"
+  ],
+  "trusted_directories": [
+    "C:/Windows",
+    "C:/Program Files",
+    "C:/Program Files (x86)"
+  ],
+  "previously_scanned_hashes": {}
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/security-score.schema.json",
+  "title": "Aegis Security Score",
+  "type": "object",
+  "required": [
+    "protection",
+    "updates",
+    "system_health",
+    "startup_risk",
+    "network_risk",
+    "user_configuration",
+    "threat_history"
+  ],
+  "properties": {
+    "protection": { "$ref": "#/$defs/category" },
+    "updates": { "$ref": "#/$defs/category" },
+    "system_health": { "$ref": "#/$defs/category" },
+    "startup_risk": { "$ref": "#/$defs/category" },
+    "network_risk": { "$ref": "#/$defs/category" },
+    "user_configuration": { "$ref": "#/$defs/category" },
+    "threat_history": { "$ref": "#/$defs/category" }
+  },
+  "$defs": {
+    "category": {
+      "type": "object",
+      "required": ["name", "score", "deductions"],
+      "properties": {
+        "name": { "type": "string" },
+        "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "deductions": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

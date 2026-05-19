@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/notification.schema.json",
+  "title": "Aegis Notification",
+  "type": "object",
+  "required": ["id", "title", "body", "level", "mode"],
+  "properties": {
+    "id": { "type": "string" },
+    "title": { "type": "string" },
+    "body": { "type": "string" },
+    "level": {
+      "type": "string",
+      "enum": ["info", "advisory", "important", "critical", "digest"]
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["normal", "silent", "gaming", "enterprise"]
+    },
+    "source_event_id": { "type": ["string", "null"] },
+    "scheduled_for": { "type": ["string", "null"], "format": "date-time" }
+  }
+}

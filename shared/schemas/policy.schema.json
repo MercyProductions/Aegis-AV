@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/policy.schema.json",
+  "title": "Aegis Protection Policy",
+  "type": "object",
+  "required": [
+    "profile",
+    "auto_quarantine",
+    "notification_level",
+    "scan_priority",
+    "real_time_scan_depth",
+    "behavioral_sensitivity",
+    "ransomware_protection",
+    "update_behavior"
+  ],
+  "properties": {
+    "profile": {
+      "type": "string",
+      "enum": ["balanced", "strict", "performance", "silent_gaming_mode", "enterprise_managed"]
+    },
+    "auto_quarantine": { "type": "boolean" },
+    "notification_level": {
+      "type": "string",
+      "enum": ["verbose", "important_only", "critical_only", "managed"]
+    },
+    "scan_priority": {
+      "type": "string",
+      "enum": ["low", "balanced", "high"]
+    },
+    "cpu_limit_percent": { "type": ["integer", "null"], "minimum": 1, "maximum": 100 },
+    "real_time_scan_depth": {
+      "type": "string",
+      "enum": ["light", "standard", "deep"]
+    },
+    "behavioral_sensitivity": {
+      "type": "string",
+      "enum": ["low", "normal", "high"]
+    },
+    "ransomware_protection": { "type": "boolean" },
+    "update_behavior": {
+      "type": "string",
+      "enum": ["automatic_verified_only", "prompt_before_apply", "managed"]
+    }
+  }
+}

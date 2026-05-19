@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/system-graph.schema.json",
+  "title": "Aegis Live System Graph",
+  "type": "object",
+  "required": ["nodes", "edges"],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "kind", "risk_score", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "process",
+              "service",
+              "driver",
+              "connection",
+              "module",
+              "startup_entry",
+              "scheduled_task",
+              "threat",
+              "automation_event"
+            ]
+          },
+          "risk_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "status": { "type": "string" }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "relation"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "relation": {
+            "type": "string",
+            "enum": [
+              "parent_child",
+              "depends_on",
+              "owns_connection",
+              "loads_driver",
+              "triggers",
+              "mitigates",
+              "scheduled_by",
+              "started_by"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

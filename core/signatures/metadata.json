@@ -1,0 +1,7 @@
+{
+  "signature_version": "2026.05.18.1",
+  "format": "json",
+  "generated_at": "2026-05-18T12:00:00Z",
+  "source": "local-dev",
+  "notes": "Safe development signatures only. No live malware samples."
+}

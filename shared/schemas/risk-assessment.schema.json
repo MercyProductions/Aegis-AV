@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis.local/schemas/risk-assessment.schema.json",
+  "title": "Aegis Predictive Risk Assessment",
+  "type": "object",
+  "required": ["score", "trend", "patterns", "recommendations"],
+  "properties": {
+    "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "trend": { "type": "string", "enum": ["falling", "stable", "rising"] },
+    "patterns": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

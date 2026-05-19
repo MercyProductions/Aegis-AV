@@ -1,0 +1,4 @@
+/*
+  Placeholder for future safe YARA rules.
+  Do not add rules that require live malware samples for testing.
+*/

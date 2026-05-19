@@ -1,0 +1,231 @@
+{
+  "real_time_protection": true,
+  "default_action": "quarantine",
+  "max_file_size_mb": 256,
+  "behavior_monitoring": {
+    "enabled": true,
+    "mode": "notify_first",
+    "auto_quarantine_critical": false,
+    "file_activity_window_ms": 10000,
+    "high_volume_write_threshold": 25
+  },
+  "ransomware_protection": {
+    "enabled": true,
+    "protected_folders": [
+      "%USERPROFILE%/Documents",
+      "%USERPROFILE%/Desktop",
+      "%USERPROFILE%/Pictures"
+    ],
+    "pause_suspicious_processes": false,
+    "auto_quarantine_high_confidence": false
+  },
+  "performance": {
+    "priority": "balanced",
+    "max_parallel_scans": 2,
+    "cpu_limit_percent": 40,
+    "battery_saver": true,
+    "skip_unchanged_files": true
+  },
+  "updates": {
+    "channel": "stable",
+    "require_signed_manifests": true,
+    "require_signed_signature_packs": true,
+    "rollback_protection": true
+  },
+  "policy": {
+    "profile": "balanced",
+    "auto_quarantine": false,
+    "notification_level": "important_only",
+    "real_time_scan_depth": "standard",
+    "behavioral_sensitivity": "normal"
+  },
+  "self_protection": {
+    "enabled": true,
+    "verify_app_hashes": true,
+    "verify_signature_database": true,
+    "verify_config_integrity": true,
+    "warn_if_service_stops": true
+  },
+  "cloud_sync": {
+    "enabled": false,
+    "upload_personal_files": false,
+    "sync_license_status": true,
+    "sync_device_name": true,
+    "sync_protection_status": true,
+    "sync_scan_summaries": true,
+    "sync_policy_settings": true,
+    "sync_false_positive_reports": true
+  },
+  "modules": {
+    "hot_reload_enabled": false,
+    "signed_modules_required": true,
+    "enabled": [
+      "Aegis.Core",
+      "Aegis.Scanner",
+      "Aegis.Realtime",
+      "Aegis.Behavior",
+      "Aegis.Quarantine",
+      "Aegis.Diagnostics",
+      "Aegis.Firewall",
+      "Aegis.Network",
+      "Aegis.ProcessMonitor",
+      "Aegis.Ransomware",
+      "Aegis.Updater",
+      "Aegis.UI",
+      "Aegis.Telemetry",
+      "Aegis.Engine"
+    ]
+  },
+  "network_visibility": {
+    "enabled": true,
+    "mode": "visibility",
+    "ask_before_outbound_for_unknown_apps": false,
+    "dns_logging": true,
+    "capture_payloads": false
+  },
+  "sandbox": {
+    "enabled": true,
+    "filesystem_access": "limited",
+    "network_access": "blocked",
+    "max_runtime_seconds": 90,
+    "destroy_environment_after_run": true,
+    "allow_real_malware_samples": false
+  },
+  "ai_assist": {
+    "enabled": true,
+    "mode": "explain_only",
+    "allow_automatic_blocking": false
+  },
+  "plugins": {
+    "enabled": true,
+    "require_signed_manifests": true,
+    "require_sandbox": true
+  },
+  "stability": {
+    "watchdog_enabled": true,
+    "safe_mode_enabled": true,
+    "automatic_rollback": true,
+    "capture_crash_reports": true,
+    "memory_growth_alert_percent": 25,
+    "stress_testing_enabled": false
+  },
+  "event_bus": {
+    "enabled": true,
+    "persist_local_events": true,
+    "max_retained_events": 5000,
+    "route_to_ui": true,
+    "route_to_logs": true,
+    "route_to_automation": true
+  },
+  "automation": {
+    "enabled": true,
+    "allow_destructive_actions_without_confirmation": false,
+    "metadata_upload_only": true,
+    "default_workflows": [
+      "ransomware_score_over_80",
+      "unknown_executable_reputation",
+      "update_failure_recovery"
+    ]
+  },
+  "notifications": {
+    "mode": "normal",
+    "desktop_notifications": true,
+    "critical_alerts": true,
+    "digest_summaries": true,
+    "gaming_mode_suppresses_non_critical": true
+  },
+  "user_profile": {
+    "active": "home_user",
+    "allow_profile_switching": true,
+    "show_advanced_diagnostics": false
+  },
+  "assistant": {
+    "enabled": true,
+    "mode": "explain_only",
+    "allow_automatic_blocking": false,
+    "upload_files": false
+  },
+  "marketplace": {
+    "enabled": true,
+    "require_signed_listings": true,
+    "require_sandbox": true,
+    "allow_preview_plugins": false
+  },
+  "trust": {
+    "transparent_logging": true,
+    "clear_permissions": true,
+    "explainable_detections": true,
+    "privacy_controls": true,
+    "minimal_telemetry": true
+  },
+  "aegis_core": {
+    "enabled": true,
+    "local_first": true,
+    "cloud_optional": true,
+    "coordinate_modules": true,
+    "route_all_events": true,
+    "enforce_permissions": true,
+    "synchronize_ui": true
+  },
+  "system_graph": {
+    "enabled": true,
+    "live_updates": true,
+    "max_relationship_depth": 4,
+    "timeline_replay": true,
+    "filtering_enabled": true
+  },
+  "orchestration": {
+    "enabled": true,
+    "reviewable_by_default": true,
+    "capture_metadata": true,
+    "scan_related_files": true,
+    "require_confirmation_for_isolation": true,
+    "snapshot_affected_files": false
+  },
+  "predictive_risk": {
+    "enabled": true,
+    "track_risky_apps": true,
+    "track_vulnerable_software": true,
+    "track_startup_changes": true,
+    "track_network_anomalies": true,
+    "generate_recommendations": true
+  },
+  "ai_operations": {
+    "enabled": true,
+    "mode": "advisory",
+    "explain_processes": true,
+    "summarize_device_health": true,
+    "allow_hidden_actions": false
+  },
+  "observability": {
+    "enabled": true,
+    "performance_traces": true,
+    "memory_analysis": true,
+    "disk_analysis": true,
+    "service_dependencies": true,
+    "crash_analysis": true
+  },
+  "workspaces": {
+    "enabled": true,
+    "default": "security",
+    "allow_custom_layouts": true,
+    "allow_detachable_windows": false
+  },
+  "distributed_architecture": {
+    "local_first": true,
+    "optional_cloud_sync": false,
+    "enterprise_fleet": false,
+    "edge_processing": true,
+    "offline_mode": true
+  },
+  "developer_ecosystem": {
+    "sdk_enabled": true,
+    "plugin_api_enabled": true,
+    "automation_api_enabled": true,
+    "dashboard_api_enabled": true,
+    "community_modules_enabled": false
+  },
+  "excluded_paths": [],
+  "excluded_hashes": [],
+  "excluded_extensions": []
+}
