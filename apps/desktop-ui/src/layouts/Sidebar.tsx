@@ -102,7 +102,7 @@ export function Sidebar() {
           className="overflow-hidden"
         >
           <div className="mt-5 border-t border-white/[0.06] pt-4 text-xs leading-6 text-white/52">
-            <div>Version 0.1.0</div>
+            <div>Version 0.1.1</div>
             <div>Definitions: 2026.05.18.1</div>
             <button className="mt-2 text-aegis-green transition hover:text-white">Check for updates</button>
           </div>

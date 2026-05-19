@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu } from 'electron';
 import { execFile, spawn, type ChildProcess } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -129,12 +129,15 @@ function registerWindowIpc() {
 }
 
 function createWindow() {
+  Menu.setApplicationMenu(null);
+
   const window = new BrowserWindow({
     width: 1600,
     height: 1000,
     minWidth: 1280,
     minHeight: 720,
     frame: false,
+    autoHideMenuBar: true,
     transparent: true,
     backgroundColor: '#00000000',
     title: 'Aegis AntiVirus',
@@ -153,6 +156,41 @@ function createWindow() {
   } else {
     void window.loadFile(path.join(__dirname, '../dist/index.html'));
   }
+
+  window.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
+    const escapedDescription = errorDescription.replace(/[<>&"]/g, (char) => {
+      const replacements: Record<string, string> = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '&': '&amp;',
+        '"': '&quot;'
+      };
+      return replacements[char];
+    });
+    const escapedURL = validatedURL.replace(/[<>&"]/g, (char) => {
+      const replacements: Record<string, string> = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '&': '&amp;',
+        '"': '&quot;'
+      };
+      return replacements[char];
+    });
+    void window.loadURL(
+      `data:text/html;charset=utf-8,${encodeURIComponent(`
+        <!doctype html>
+        <html>
+          <body style="margin:0;background:#05070A;color:#fff;font-family:Inter,Segoe UI,sans-serif;display:grid;place-items:center;height:100vh;">
+            <main style="max-width:680px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:#101720;padding:32px;box-shadow:0 30px 120px rgba(0,0,0,.55);">
+              <h1 style="margin:0 0 12px;font-size:28px;">Aegis failed to load the desktop UI</h1>
+              <p style="margin:0 0 18px;color:rgba(255,255,255,.7);line-height:1.6;">The packaged React assets could not be opened. Rebuild the portable app or reinstall the latest AegisAV.exe.</p>
+              <code style="display:block;white-space:pre-wrap;color:#6CFF6C;">${escapedDescription} (${errorCode})\n${escapedURL}</code>
+            </main>
+          </body>
+        </html>
+      `)}`
+    );
+  });
 
   window.on('closed', () => {
     if (mainWindow === window) {

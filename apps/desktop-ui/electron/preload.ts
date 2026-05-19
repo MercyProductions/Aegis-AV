@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('aegis', {
-  version: '0.1.0',
+  version: '0.1.1',
   agent: {
     status: () => ipcRenderer.invoke('agent:status'),
     arm: () => ipcRenderer.invoke('agent:arm'),
