@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let guardProcess: ChildProcess | undefined;
+let mainWindow: BrowserWindow | undefined;
 
 interface AgentCommandResult {
   ok: boolean;
@@ -107,13 +108,35 @@ function registerAgentIpc() {
   });
 }
 
+function registerWindowIpc() {
+  ipcMain.handle('window:minimize', (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.minimize();
+  });
+  ipcMain.handle('window:maximize', (event) => {
+    const window = BrowserWindow.fromWebContents(event.sender);
+    if (!window) {
+      return;
+    }
+    if (window.isMaximized()) {
+      window.unmaximize();
+    } else {
+      window.maximize();
+    }
+  });
+  ipcMain.handle('window:close', (event) => {
+    BrowserWindow.fromWebContents(event.sender)?.close();
+  });
+}
+
 function createWindow() {
   const window = new BrowserWindow({
-    width: 1320,
-    height: 860,
-    minWidth: 1100,
+    width: 1600,
+    height: 1000,
+    minWidth: 1280,
     minHeight: 720,
-    backgroundColor: '#07111f',
+    frame: false,
+    transparent: true,
+    backgroundColor: '#00000000',
     title: 'Aegis AntiVirus',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -122,6 +145,7 @@ function createWindow() {
       sandbox: true
     }
   });
+  mainWindow = window;
 
   const devUrl = process.env.AEGIS_UI_DEV_URL;
   if (devUrl) {
@@ -129,10 +153,17 @@ function createWindow() {
   } else {
     void window.loadFile(path.join(__dirname, '../dist/index.html'));
   }
+
+  window.on('closed', () => {
+    if (mainWindow === window) {
+      mainWindow = undefined;
+    }
+  });
 }
 
 void app.whenReady().then(() => {
   registerAgentIpc();
+  registerWindowIpc();
   createWindow();
 });
 
