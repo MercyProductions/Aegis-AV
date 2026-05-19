@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron';
 import { execFile, spawn, type ChildProcess } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,38 +15,45 @@ interface AgentCommandResult {
   error?: string;
 }
 
-function findAgentExecutable() {
+function findRuntimeExecutable(executableName: string) {
   const candidates = [
-    process.env.AEGIS_AGENT_EXE,
-    path.resolve(process.resourcesPath, 'bin', 'aegis-agent.exe'),
-    path.resolve(app.getAppPath(), '..', '..', 'target', 'release', 'aegis-agent.exe'),
-    path.resolve(__dirname, '..', '..', '..', 'target', 'release', 'aegis-agent.exe'),
-    path.resolve(process.cwd(), 'target', 'release', 'aegis-agent.exe'),
-    path.resolve(process.cwd(), '..', '..', 'target', 'release', 'aegis-agent.exe')
+    executableName === 'aegis-agent.exe' ? process.env.AEGIS_AGENT_EXE : process.env.AEGIS_SCANNER_EXE,
+    path.resolve(process.resourcesPath, 'bin', executableName),
+    path.resolve(app.getAppPath(), '..', '..', 'target', 'release', executableName),
+    path.resolve(__dirname, '..', '..', '..', 'target', 'release', executableName),
+    path.resolve(process.cwd(), 'target', 'release', executableName),
+    path.resolve(process.cwd(), '..', '..', 'target', 'release', executableName)
   ].filter((candidate): candidate is string => Boolean(candidate));
 
   const found = candidates.find((candidate) => fs.existsSync(candidate));
   if (!found) {
-    throw new Error('aegis-agent.exe was not found. Build it with: cargo build --release -p aegis-agent');
+    throw new Error(`${executableName} was not found. Build release binaries with: cargo build --release -p aegis-agent -p aegis-scanner`);
   }
   return found;
 }
 
-function runtimeRootFromAgent(agentPath: string) {
-  if (agentPath.toLowerCase().startsWith(process.resourcesPath.toLowerCase())) {
+function findAgentExecutable() {
+  return findRuntimeExecutable('aegis-agent.exe');
+}
+
+function findScannerExecutable() {
+  return findRuntimeExecutable('aegis-scanner.exe');
+}
+
+function runtimeRootFromExecutable(executablePath: string) {
+  if (executablePath.toLowerCase().startsWith(process.resourcesPath.toLowerCase())) {
     return process.resourcesPath;
   }
 
-  return path.resolve(path.dirname(agentPath), '..', '..');
+  return path.resolve(path.dirname(executablePath), '..', '..');
 }
 
-function runAgent(args: string[]): Promise<AgentCommandResult> {
-  const agentPath = findAgentExecutable();
+function runExecutable(executablePath: string, args: string[]): Promise<AgentCommandResult> {
   return new Promise((resolve) => {
     execFile(
-      agentPath,
+      executablePath,
       args,
-      { cwd: runtimeRootFromAgent(agentPath), windowsHide: true },
+      { cwd: runtimeRootFromExecutable(executablePath), windowsHide: true },
       (error, stdout, stderr) => {
         resolve({
           ok: !error,
@@ -57,6 +64,10 @@ function runAgent(args: string[]): Promise<AgentCommandResult> {
       }
     );
   });
+}
+
+function runAgent(args: string[]): Promise<AgentCommandResult> {
+  return runExecutable(findAgentExecutable(), args);
 }
 
 async function agentStatus() {
@@ -88,7 +99,7 @@ function registerAgentIpc() {
     if (!guardProcess || guardProcess.killed || guardProcess.exitCode !== null) {
       const agentPath = findAgentExecutable();
       guardProcess = spawn(agentPath, ['run', '--arm'], {
-        cwd: runtimeRootFromAgent(agentPath),
+        cwd: runtimeRootFromExecutable(agentPath),
         windowsHide: true,
         stdio: 'ignore'
       });
@@ -105,6 +116,53 @@ function registerAgentIpc() {
     }
     await runAgent(['disarm']);
     return agentStatus();
+  });
+}
+
+function registerScannerIpc() {
+  ipcMain.handle(
+    'scanner:scan',
+    async (
+      _event,
+      options: {
+        profile?: string;
+        target?: string;
+      } = {}
+    ) => {
+      const profile = ['quick', 'full', 'deep', 'custom'].includes(options.profile ?? '')
+        ? options.profile
+        : 'quick';
+      const scannerPath = findScannerExecutable();
+      const args = ['scan'];
+      if (options.target && options.target.trim().length > 0) {
+        args.push(options.target.trim());
+      }
+      args.push('--profile', profile ?? 'quick', '--json');
+      const result = await runExecutable(scannerPath, args);
+      let summary: unknown = undefined;
+      if (result.ok) {
+        summary = JSON.parse(result.stdout);
+      }
+      return {
+        ...result,
+        scannerPath,
+        summary
+      };
+    }
+  );
+
+  ipcMain.handle('scanner:browse-folder', async () => {
+    const options: Electron.OpenDialogOptions = {
+      title: 'Choose folder to scan',
+      properties: ['openDirectory']
+    };
+    const result = mainWindow
+      ? await dialog.showOpenDialog(mainWindow, options)
+      : await dialog.showOpenDialog(options);
+    if (result.canceled || result.filePaths.length === 0) {
+      return null;
+    }
+    return result.filePaths[0];
   });
 }
 
@@ -201,6 +259,7 @@ function createWindow() {
 
 void app.whenReady().then(() => {
   registerAgentIpc();
+  registerScannerIpc();
   registerWindowIpc();
   createWindow();
 });

@@ -25,6 +25,8 @@ export function HeroProtectionCard() {
   const armGuard = useSecurityStore((state) => state.armGuard);
   const disarmGuard = useSecurityStore((state) => state.disarmGuard);
   const refreshAgent = useSecurityStore((state) => state.refreshAgent);
+  const runScan = useSecurityStore((state) => state.runScan);
+  const setPage = useSecurityStore((state) => state.setPage);
   const protectedState = status?.armed !== false;
 
   return (
@@ -90,13 +92,16 @@ export function HeroProtectionCard() {
           </div>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <button className="primary-button min-w-[170px]" disabled={busy} onClick={() => void startGuard()}>
+            <button className="primary-button min-w-[170px]" disabled={busy} onClick={() => void runScan('quick')}>
               <Radar className="h-4 w-4" /> Quick Scan
             </button>
-            <button className="secondary-button min-w-[150px]" disabled={busy} onClick={() => void refreshAgent()}>
+            <button className="secondary-button min-w-[150px]" disabled={busy} onClick={() => setPage('scan')}>
               <RotateCw className="h-4 w-4" /> Advanced Scan
             </button>
             <div className="h-8 w-px bg-white/[0.08]" />
+            <button className="icon-text-button" disabled={busy} onClick={() => void startGuard()}>
+              <Play className="h-4 w-4" /> Start Guard
+            </button>
             <button className="icon-text-button" disabled={busy} onClick={() => void armGuard()}>
               <Power className="h-4 w-4" /> Arm
             </button>

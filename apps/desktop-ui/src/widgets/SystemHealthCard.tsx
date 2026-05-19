@@ -1,5 +1,4 @@
 import { Check, ShieldCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { GlassCard } from '../components/GlassCard';
 
 const checks = ['No security issues detected', 'All modules are up to date', 'Real-time protection active'];
@@ -9,18 +8,14 @@ export function SystemHealthCard() {
     <GlassCard className="col-span-12 p-6 xl:col-span-3" delay={0.18}>
       <h2 className="text-[18px] font-semibold text-white">System Protection</h2>
       <div className="mt-8 grid place-items-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          className="health-ring"
-        >
+        <div className="health-ring">
           <div className="grid h-[142px] w-[142px] place-items-center rounded-full bg-aegis-card text-center">
             <div>
               <div className="text-[36px] font-bold leading-none text-white">100%</div>
               <div className="mt-2 text-sm text-white/72">Secure</div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
       <div className="mt-8 text-center text-sm font-medium text-aegis-green">All protection layers are active</div>
       <div className="mt-6 space-y-4">

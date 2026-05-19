@@ -21,6 +21,55 @@ export interface AgentResponse {
   status?: AgentStatus;
 }
 
+export type ScanProfile = 'quick' | 'full' | 'deep' | 'custom';
+
+export interface FileMetadata {
+  size_bytes: number;
+  extension?: string | null;
+  mime_guess?: string | null;
+  modified_unix_seconds?: number | null;
+}
+
+export interface HeuristicFinding {
+  rule_id: string;
+  description: string;
+  score: number;
+}
+
+export interface ScanResult {
+  path: string;
+  verdict: 'clean' | 'suspicious' | 'malicious' | 'skipped' | 'error';
+  detection_name?: string | null;
+  confidence_score: number;
+  matched_rule?: string | null;
+  sha256?: string | null;
+  file_metadata?: FileMetadata | null;
+  scan_duration_ms: number;
+  heuristics: HeuristicFinding[];
+  errors: string[];
+}
+
+export interface ScanSummary {
+  target: string;
+  profile: ScanProfile;
+  files_scanned: number;
+  files_skipped: number;
+  errors: number;
+  threats_found: number;
+  suspicious_found: number;
+  duration_ms: number;
+  results: ScanResult[];
+}
+
+export interface ScanResponse {
+  ok: boolean;
+  stdout: string;
+  stderr: string;
+  error?: string;
+  scannerPath?: string;
+  summary?: ScanSummary;
+}
+
 export interface AegisBridge {
   version: string;
   agent?: {
@@ -29,6 +78,10 @@ export interface AegisBridge {
     disarm: () => Promise<AgentResponse>;
     start: () => Promise<AgentResponse>;
     stop: () => Promise<AgentResponse>;
+  };
+  scanner?: {
+    scan: (options: { profile: ScanProfile; target?: string }) => Promise<ScanResponse>;
+    browseFolder: () => Promise<string | null>;
   };
   windowControls?: {
     minimize: () => Promise<void>;

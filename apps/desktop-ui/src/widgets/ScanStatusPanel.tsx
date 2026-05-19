@@ -1,5 +1,6 @@
 import { CheckCircle2, ShieldCheck, ShieldQuestion } from 'lucide-react';
 import { GlassCard } from '../components/GlassCard';
+import { useSecurityStore } from '../store/securityStore';
 
 const scans = [
   { name: 'Quick Scan', state: 'Completed', time: 'Today, 8:42 AM', result: 'No threats found', active: true },
@@ -8,6 +9,9 @@ const scans = [
 ];
 
 export function ScanStatusPanel() {
+  const runScan = useSecurityStore((state) => state.runScan);
+  const scanBusy = useSecurityStore((state) => state.scanBusy);
+
   return (
     <GlassCard className="col-span-12 p-6 xl:col-span-4" delay={0.14}>
       <div className="mb-5 flex items-center justify-between">
@@ -38,8 +42,8 @@ export function ScanStatusPanel() {
         ))}
       </div>
 
-      <button className="primary-button mt-5 w-full">
-        <CheckCircle2 className="h-4 w-4" /> Run New Scan
+      <button className="primary-button mt-5 w-full" disabled={scanBusy} onClick={() => void runScan('quick')}>
+        <CheckCircle2 className="h-4 w-4" /> {scanBusy ? 'Scan Running' : 'Run New Scan'}
       </button>
     </GlassCard>
   );
